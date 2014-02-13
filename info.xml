@@ -4,6 +4,12 @@
   <name>CaseActivity Get API CiviCRM</name>
   <description>CiviCRM API to retrieve all current activities (incl targets and assignees) for case</description>
   <license>AGPL-3.0</license>
+<urls>
+    <url desc="Main Extension Page">https://github.com/CiviCooP/org.civicoop.api.caseactivity</url>
+    <url desc="Documentation">https://github.com/CiviCooP/org.civicoop.api.caseactivity</url>
+    <url desc="Support">http://forum.civicrm.org</url>
+    <url desc="Licensing">http://civicrm.org/licensing</url>
+</urls>  
   <maintainer>
     <author>Erik Hommel (CiviCooP)</author>
     <email>erik.hommel@civicoop.org</email>
