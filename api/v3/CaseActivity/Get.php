@@ -34,14 +34,15 @@ function civicrm_api3_case_activity_get($params) {
 b.activity_type_id, d.label as activity_type, b.subject, b.activity_date_time, 
 b.location, b.status_id, e.label AS status, b.priority_id, f.label AS priority, 
 b.medium_id, g.label AS medium, b.details
-FROM dgw_mutcivi.civicrm_case_activity a
+FROM civicrm_case_activity a
 LEFT JOIN civicrm_activity b ON a.activity_id = b.id
 LEFT JOIN civicrm_contact c ON b.source_contact_id = c.id
 LEFT JOIN civicrm_option_value d ON b.activity_type_id = d.value AND d.option_group_id = 2
 LEFT JOIN civicrm_option_value e ON b.status_id = e.value AND e.option_group_id = 25
 LEFT JOIN civicrm_option_value f ON b.priority_id = f.value AND f.option_group_id = 38
 LEFT JOIN civicrm_option_value g ON b.medium_id = g.value AND g.option_group_id = 57
-WHERE a.case_id = {$params['case_id']} AND b.is_current_revision = 1";
+WHERE a.case_id = {$params['case_id']} AND b.is_current_revision = 1
+ORDER BY b.activity_date_time DESC";
         $dao = CRM_Core_DAO::executeQuery($query);
         while ($dao->fetch()) {
             $fields = get_object_vars($dao);
