@@ -27,7 +27,7 @@ function civicrm_api3_case_activity_get($params) {
     /*
      * retrieve all activities for case
      */
-    $query = "SELECT a.activity_id, h.contact_id, c.display_name AS source_name, b.activity_type_id,
+    $select = "SELECT a.activity_id, h.contact_id, c.display_name AS source_name, b.activity_type_id,
       d.label as activity_type, b.subject, b.activity_date_time, b.location, b.status_id, e.label AS status,
       b.priority_id, f.label AS priority, b.medium_id, g.label AS medium, b.details
       FROM civicrm_case_activity a
@@ -37,9 +37,7 @@ function civicrm_api3_case_activity_get($params) {
       LEFT JOIN civicrm_option_value d ON b.activity_type_id = d.value AND d.option_group_id = %2
       LEFT JOIN civicrm_option_value e ON b.status_id = e.value AND e.option_group_id = %3
       LEFT JOIN civicrm_option_value f ON b.priority_id = f.value AND f.option_group_id = %4
-      LEFT JOIN civicrm_option_value g ON b.medium_id = g.value AND g.option_group_id = %5
-      WHERE a.case_id = %6 AND b.is_current_revision = %7
-      ORDER BY b.activity_date_time DESC";
+      LEFT JOIN civicrm_option_value g ON b.medium_id = g.value AND g.option_group_id = %5";
     $queryParams = array(
       1 => array(2, 'Integer'),
       2 => array(2, 'Integer'),
@@ -49,6 +47,14 @@ function civicrm_api3_case_activity_get($params) {
       6 => array($params['case_id'], 'Integer'),
       7 => array(1, 'Integer')
     );
+    $where = "WHERE a.case_id = %6 AND b.is_current_revision = %7";
+    if (isset($params['activity_type_id'])) {
+      $where .= ' AND b.activity_type_id = %8';
+      $queryParams[8] = array($params['activity_type_id'], 'Integer');
+    }
+    $orderBy = "ORDER BY b.activity_date_time DESC";
+    $query = $select.' '.$where.' '.$orderBy;
+
     $dao = CRM_Core_DAO::executeQuery($query, $queryParams);
     while ($dao->fetch()) {
       $fields = get_object_vars($dao);
