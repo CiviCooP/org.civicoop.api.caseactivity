@@ -96,6 +96,7 @@ function civicrm_api3_case_activity_get($params) {
         $assignees[] = $assignee;
       }
       $caseActivity['assignees'] = $assignees;
+      _getActivityCustomData($caseActivity);
       $caseActivities[] = $caseActivity;
     }
     return civicrm_api3_create_success($caseActivities, $params, 'CaseActivity', 'Get');
@@ -104,3 +105,43 @@ function civicrm_api3_case_activity_get($params) {
       be empty and has to be numeric');
   }
 }
+/**
+ * Function to get custom groups, fields and data if there is any
+ *
+ * @param array $caseActivity
+ */
+function _getActivityCustomData(&$caseActivity) {
+  $customGroupParams = array(
+    'extends' => 'Activity',
+    'extends_entity_column_value' => $caseActivity['activity_type_id'],
+    'is_active' => 1);
+  try {
+    $customGroups = civicrm_api3('CustomGroup', 'Get', $customGroupParams);
+    foreach ($customGroups['values'] as $customGroupId => $customGroup) {
+      $customFieldParams = array(
+        'custom_group_id' => $customGroupId,
+        'is_active' => 1);
+      try {
+        $customFields = civicrm_api3('CustomField', 'Get', $customFieldParams);
+        selectActivityCustomData($customGroup['table_name'], $customFields, $caseActivity);
+      } catch (CiviCRM_API3_Exception $ex) {
+      }
+    }
+  } catch (CiviCRM_API3_Exception $ex) {
+  }
+}
+function selectActivityCustomData($tableName, $customFields, &$caseActivity) {
+  $selectFields = array();
+  foreach ($customFields['values'] as $customFieldId => $customRecord) {
+    $selectFields[] = $customRecord['column_name'];
+  }
+  $query = 'SELECT '.implode(', ', $selectFields).' FROM '.$tableName.' WHERE entity_id = %1';
+  $queryParams = array(1 => array($caseActivity['activity_id'], 'Integer'));
+  $daoCustomData = CRM_Core_DAO::executeQuery($query, $queryParams);
+  if ($daoCustomData->fetch()) {
+    foreach ($selectFields as $fieldColumnName) {
+      $caseActivity[$fieldColumnName] = $daoCustomData->$fieldColumnName;
+    }
+  }
+}
+
