@@ -97,7 +97,7 @@ function civicrm_api3_case_activity_get($params) {
       }
       $caseActivity['assignees'] = $assignees;
       _getActivityCustomData($caseActivity);
-      $caseActivities[] = $caseActivity;
+      $caseActivities[$caseActivity['activity_id']] = $caseActivity;
     }
     return civicrm_api3_create_success($caseActivities, $params, 'CaseActivity', 'Get');
   } else {
