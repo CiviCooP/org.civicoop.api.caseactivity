@@ -45,12 +45,13 @@ function civicrm_api3_case_activity_get($params) {
       4 => array(38, 'Integer'),
       5 => array(57, 'Integer'),
       6 => array($params['case_id'], 'Integer'),
-      7 => array(1, 'Integer')
+      7 => array(1, 'Integer'),
+      8 => array(0, 'Integer')
     );
-    $where = "WHERE a.case_id = %6 AND b.is_current_revision = %7";
+    $where = "WHERE a.case_id = %6 AND b.is_current_revision = %7 AND b.is_deleted = %8";
     if (isset($params['activity_type_id'])) {
-      $where .= ' AND b.activity_type_id = %8';
-      $queryParams[8] = array($params['activity_type_id'], 'Integer');
+      $where .= ' AND b.activity_type_id = %9';
+      $queryParams[9] = array($params['activity_type_id'], 'Integer');
     }
     $orderBy = "ORDER BY b.activity_date_time DESC";
     $query = $select.' '.$where.' '.$orderBy;
