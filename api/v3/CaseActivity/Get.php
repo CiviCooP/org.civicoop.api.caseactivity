@@ -40,10 +40,10 @@ function civicrm_api3_case_activity_get($params) {
       LEFT JOIN civicrm_option_value g ON b.medium_id = g.value AND g.option_group_id = %5";
     $queryParams = array(
       1 => array(2, 'Integer'),
-      2 => array(2, 'Integer'),
-      3 => array(25, 'Integer'),
-      4 => array(38, 'Integer'),
-      5 => array(57, 'Integer'),
+      2 => array(_getOptionGroupId('activity_type'), 'Integer'),
+      3 => array(_getOptionGroupId('case_status'), 'Integer'),
+      4 => array(_getOptionGroupId('priority'), 'Integer'),
+      5 => array(_getOptionGroupId('encounter_medium'), 'Integer'),
       6 => array($params['case_id'], 'Integer'),
       7 => array(1, 'Integer'),
       8 => array(0, 'Integer')
@@ -124,14 +124,14 @@ function _getActivityCustomData(&$caseActivity) {
         'is_active' => 1);
       try {
         $customFields = civicrm_api3('CustomField', 'Get', $customFieldParams);
-        selectActivityCustomData($customGroup['table_name'], $customFields, $caseActivity);
+        _selectActivityCustomData($customGroup['table_name'], $customFields, $caseActivity);
       } catch (CiviCRM_API3_Exception $ex) {
       }
     }
   } catch (CiviCRM_API3_Exception $ex) {
   }
 }
-function selectActivityCustomData($tableName, $customFields, &$caseActivity) {
+function _selectActivityCustomData($tableName, $customFields, &$caseActivity) {
   $selectFields = array();
   foreach ($customFields['values'] as $customFieldId => $customRecord) {
     $selectFields[] = $customRecord['column_name'];
@@ -144,5 +144,11 @@ function selectActivityCustomData($tableName, $customFields, &$caseActivity) {
       $caseActivity[$fieldColumnName] = $daoCustomData->$fieldColumnName;
     }
   }
+}
+function _getOptionGroupId($name) {
+  $params = array(
+    'name' => $name,
+    'return' => 'id');
+  return civicrm_api3('OptionGroup', 'Getvalue', $params);
 }
 
