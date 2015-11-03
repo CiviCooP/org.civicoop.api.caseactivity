@@ -41,7 +41,7 @@ function civicrm_api3_case_activity_get($params) {
     $queryParams = array(
       1 => array(2, 'Integer'),
       2 => array(_getOptionGroupId('activity_type'), 'Integer'),
-      3 => array(_getOptionGroupId('case_status'), 'Integer'),
+      3 => array(_getOptionGroupId('activity_status'), 'Integer'),
       4 => array(_getOptionGroupId('priority'), 'Integer'),
       5 => array(_getOptionGroupId('encounter_medium'), 'Integer'),
       6 => array($params['case_id'], 'Integer'),
