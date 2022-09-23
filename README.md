@@ -1,3 +1,5 @@
+This repository is moved to https://lab.civicrm.org/partners/civicoop/bindkracht/org.civicoop.api.caseactivity
+
 org.civicoop.api.caseactivity
 =============================
 
